@@ -8,11 +8,11 @@ class Video {
 
     private _video: HTMLElement;
     private _src: string;
-    private _completeHandler: FunctionVO;
+    private _completeHandler: any;
 
     private _isInit: boolean;
 
-    private _maskSp: h5_engine.GShape;
+    private _maskSp: egret.Shape;
     /**自动播放 */
     private _autoPlay: boolean;
 
@@ -25,24 +25,24 @@ class Video {
         this._video.style.visibility = "hidden";
     }
 
-    public init(src: string, poster: string = "", autoPlay: boolean = true, completeHandler: FunctionVO = null, layerType: string = ""): void {
+    public init(src: string, poster: string = "", autoPlay: boolean = true, completeHandler: any = null, layerType: string = ""): void {
         if (this._src)
             this.pause();
-        GameLog.log('播放视频:' + src);
+        console.log('播放视频:' + src);
         this._video.style.visibility = "visible";
-        if (poster == "") {
-            poster = ResPathUtil.getCommonImageRes("imgAlpha");
-        }
+        // if (poster == "") {
+        //     poster = ResPathUtil.getCommonImageRes("imgAlpha");
+        // }
 
-        if (this._maskSp == null) {
-            this._maskSp = new h5_engine.GShape();
-        }
-        this._maskSp.alpha = 1;
-        App.layer.videoLoadingLayer.addChild(this._maskSp);
+        // if (this._maskSp == null) {
+        //     this._maskSp = new egret.Shape();
+        // }
+        // this._maskSp.alpha = 1;
+        // Config.stage.addChild(this._maskSp);
 
-        if (layerType == Video.TOP) {
-            App.layer.showVideoLayer(true);
-        }
+        // if (layerType == Video.TOP) {
+        //     App.layer.showVideoLayer(true);
+        // }
         this._isInit = false;
         this._video["poster"] = poster;
         this._src = src;
@@ -52,8 +52,8 @@ class Video {
         if (completeHandler) {
             this._video.addEventListener("ended", this.onPlayerComplete);
         }
-        this._completeHandler = completeHandler;
-        App.stage.addEventListener(egret.Event.RESIZE, this.onResize, this);
+        // this._completeHandler = completeHandler;
+        Config.stage.addEventListener(egret.Event.RESIZE, this.onResize, this);
         this.onResize();
     }
 
@@ -75,21 +75,21 @@ class Video {
 
     public dispose(): void {
         this._video.style.visibility = "hidden";
-        App.layer.showVideoLayer(false);
-        PanelOpenManager.removePanel(EnumPanelID.VIDEO_BUTTON);
+        // App.layer.showVideoLayer(false);
+        // PanelOpenManager.removePanel(EnumPanelID.VIDEO_BUTTON);
         this._video.removeEventListener("ended", this.onPlayerComplete);
         this._video.removeEventListener("canplaythrough", this.onCanPlayVideo);
         this.pause();
-        if (this._maskSp)
-            this._maskSp.remove();
+        // if (this._maskSp)
+        // this._maskSp.remove();
         this._isInit = false;
         this._src = null;
         this._video["src"] = "";
         this._video["poster"] = "";
         this.loop = false;
         this.muted = false;
-        this._completeHandler = null;
-        App.stage.removeEventListener(egret.Event.RESIZE, this.onResize, this);
+        // this._completeHandler = null;
+        Config.stage.removeEventListener(egret.Event.RESIZE, this.onResize, this);
     }
 
     /**
@@ -129,24 +129,31 @@ class Video {
     }
 
     /**播放完成回调 */
-    public get completeHandler(): FunctionVO {
+    public get completeHandler(): any {
         return this._completeHandler;
     }
 
     private hideMaskSp(): void {
-        egret.Tween.get(this._maskSp).to({ alpha: 0 }, 500).call(() => {
-            this._maskSp.remove();
-        })
+        // egret.Tween.get(this._maskSp).to({ alpha: 0 }, 500).call(() => {
+        //     this._maskSp.remove();
+        // })
     }
 
     private onResize(e: egret.Event = null): void {
-        var clientW: number = document.body.clientWidth;
-        var clientH: number = document.body.clientHeight;
-        if(DeviceUtil.IsWeb){
-            if(DeviceUtil.isMobile){
-                
+
+        Config.txt.text = document.body.clientWidth + "," + document.body.clientHeight + "\n" +
+            window.innerWidth + "," + window.innerHeight;
+        if (DeviceUtil.IsWeb) {
+            if (DeviceUtil.isMobile) {
+                // this._video.style.transform = "scale("+window.innerWidth/window.innerHeight+")"
+                var clientW: number = document.body.clientWidth;
+                var clientH: number = document.body.clientHeight;
+                this._video["width"] = clientW;
+                this._video["height"] = clientH;
             }
-            else{
+            else {
+                var clientW: number = document.body.clientWidth;
+                var clientH: number = document.body.clientHeight;
                 this._video["width"] = clientW;
                 this._video["height"] = clientH;
             }
@@ -160,12 +167,12 @@ class Video {
         //     var scale: number = tempW / clientH * videoScale;
         //     this._video.style.transform = "rotate(-90deg) scale(" + scale + ")";
         // }
-        if (this._maskSp.parent && (this._maskSp.width != Config.SCREEN_WIDTH || this._maskSp.height != Config.SCREEN_HEIGHT)) {
-            this._maskSp.graphics.clear();
-            this._maskSp.graphics.beginFill(0);
-            this._maskSp.graphics.drawRect(0, 0, Config.SCREEN_WIDTH, Config.SCREEN_HEIGHT);
-            this._maskSp.graphics.endFill();
-        }
+        // if (this._maskSp.parent && (this._maskSp.width != Config.SCREEN_WIDTH || this._maskSp.height != Config.SCREEN_HEIGHT)) {
+        //     this._maskSp.graphics.clear();
+        //     this._maskSp.graphics.beginFill(0);
+        //     this._maskSp.graphics.drawRect(0, 0, Config.SCREEN_WIDTH, Config.SCREEN_HEIGHT);
+        //     this._maskSp.graphics.endFill();
+        // }
         // GameLog.log(clientW,clientH);
     }
 

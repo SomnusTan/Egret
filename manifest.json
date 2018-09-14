@@ -11,10 +11,12 @@
 	"game": [
 		"bin-debug/AssetAdapter.js",
 		"bin-debug/Config.js",
+		"bin-debug/DeviceUtil.js",
 		"bin-debug/LoadingUI.js",
 		"bin-debug/Main.js",
 		"bin-debug/MyVideo.js",
 		"bin-debug/Platform.js",
-		"bin-debug/ThemeAdapter.js"
+		"bin-debug/ThemeAdapter.js",
+		"bin-debug/Video.js"
 	]
 }
