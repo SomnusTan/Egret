@@ -44,7 +44,7 @@ class Video {
         //     App.layer.showVideoLayer(true);
         // }
         this._isInit = false;
-        this._video["poster"] = poster;
+        // this._video["poster"] = poster;
         this._src = src;
         this._video["src"] = src;
         this._autoPlay = autoPlay;
@@ -141,19 +141,22 @@ class Video {
 
     private onResize(e: egret.Event = null): void {
 
-        Config.txt.text = document.body.clientWidth + "," + document.body.clientHeight + "\n" +
-            window.innerWidth + "," + window.innerHeight;
         if (DeviceUtil.IsWeb) {
-            if (DeviceUtil.isMobile) {
+            var clientW: number = document.body.clientWidth;
+            var clientH: number = document.body.clientHeight;
+            if (DeviceUtil.isMobile && Config.stage.orientation == egret.OrientationMode.LANDSCAPE) {
                 // this._video.style.transform = "scale("+window.innerWidth/window.innerHeight+")"
-                var clientW: number = document.body.clientWidth;
-                var clientH: number = document.body.clientHeight;
-                this._video["width"] = clientW;
-                this._video["height"] = clientH;
+                this._video.style.transform = "rotate(90deg) translate(" + ((clientH - clientW) / 2) + "px," + ((clientH - clientW) / 2) + "px)";
+                this._video.style.webkitTransform = "rotate(90deg) translate(" + ((clientH - clientW) / 2) + "px," + ((clientH - clientW) / 2) + "px)";
+                this._video.style.width = clientH + "px";
+                this._video.style.height = clientW + "px";
+                this._video.style.transformOrigin = "center center";
+                this._video.style.webkitTransformOrigin = "center center";
+                // this._video["width"] = clientH;
+                // this._video["height"] = clientW;
+                Config.txt.text = clientW + "," + clientH + "  " + window.innerWidth + "," + window.innerHeight;
             }
             else {
-                var clientW: number = document.body.clientWidth;
-                var clientH: number = document.body.clientHeight;
                 this._video["width"] = clientW;
                 this._video["height"] = clientH;
             }

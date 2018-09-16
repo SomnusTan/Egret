@@ -59,7 +59,6 @@ class Main extends eui.UILayer {
     private async runGame() {
         await this.loadResource()
         this.createGameScene();
-        const result = await RES.getResAsync("description_json")
     }
 
     private async loadResource() {
@@ -68,8 +67,6 @@ class Main extends eui.UILayer {
             this.stage.addChild(loadingView);
             await RES.loadConfig("resource/default.res.json", "resource/");
             await this.loadTheme();
-            await RES.loadGroup("preload", 0, loadingView);
-            this.stage.removeChild(loadingView);
         }
         catch (e) {
             console.error(e);
@@ -96,12 +93,29 @@ class Main extends eui.UILayer {
     protected createGameScene(): void {
         Config.stage = this.stage;
         this.textfield = new egret.TextField();
+        this.textfield.touchEnabled=true;
         this.textfield.stroke = 1;
+        this.textfield.text = "点击切换模式1";
         this.addChild(this.textfield);
-        Config.txt = this.textfield
+        Config.txt = this.textfield;
+        this.stage.once(egret.TouchEvent.TOUCH_TAP,this.onTouchTxt,this);
+        // this.stage.once(egret.TouchEvent.TOUCH_TAP, this.onPlayVideo, this);
+    }
 
+    private onTouchTxt(e:egret.TouchEvent):void{
+        // this.stage.orientation = 
+        this.textfield.text = "已经点击了"+DeviceUtil.IsWeb+DeviceUtil.isMobile;
+        if(DeviceUtil.IsWeb){
+           if(DeviceUtil.isMobile) {
+               this.stage.orientation = egret.OrientationMode.LANDSCAPE;
+               this.stage.setContentSize(1280,720);
+           }
+           else{
+               this.stage.setContentSize(1280,720);
+           }
+        }
+        e.stopPropagation();
         this.stage.once(egret.TouchEvent.TOUCH_TAP, this.onPlayVideo, this);
-
     }
 
     /**
@@ -109,8 +123,7 @@ class Main extends eui.UILayer {
      * Click the button
      */
     private onPlayVideo(e: egret.TouchEvent) {
-
-        Video.instance().init("resource/assets/z6_1.mp4", null, true, )
+        Video.instance().init("resource/videos/V2.mp4", null, true)
         // let panel = new eui.Panel();
         // panel.title = "Title";
         // panel.horizontalCenter = 0;
