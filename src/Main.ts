@@ -32,6 +32,13 @@ class Main extends eui.UILayer {
 
     protected createChildren(): void {
         super.createChildren();
+        if (DeviceUtil.IsWeb) {
+            if (DeviceUtil.isMobile) {
+                this.stage.orientation = egret.OrientationMode.PORTRAIT;
+            } else {
+                this.stage.orientation = egret.OrientationMode.AUTO;
+            }
+        }
 
         egret.lifecycle.addLifecycleListener((context) => {
             // custom lifecycle plugin
@@ -86,6 +93,8 @@ class Main extends eui.UILayer {
     }
 
     private textfield: egret.TextField;
+    private textfield1: egret.TextField;
+    private textfield2: egret.TextField;
     /**
      * 创建场景界面
      * Create scene interface
@@ -93,26 +102,56 @@ class Main extends eui.UILayer {
     protected createGameScene(): void {
         Config.stage = this.stage;
         this.textfield = new egret.TextField();
-        this.textfield.touchEnabled=true;
+        this.textfield.touchEnabled = true;
         this.textfield.stroke = 1;
-        this.textfield.text = "点击切换模式1";
+        this.textfield.text = "点击播放视频";
         this.addChild(this.textfield);
-        Config.txt = this.textfield;
-        this.stage.once(egret.TouchEvent.TOUCH_TAP,this.onTouchTxt,this);
+        this.textfield.once(egret.TouchEvent.TOUCH_TAP, this.onTouchTxt, this);
+
+        this.textfield1 = new egret.TextField();
+        this.textfield1.y = 50;
+        this.textfield1.touchEnabled = true;
+        this.textfield1.stroke = 1;
+        this.textfield1.text = "点击横屏播放视频";
+        this.addChild(this.textfield1);
+        this.textfield1.once(egret.TouchEvent.TOUCH_TAP, this.onTouchTxt1, this);
+        // this.stage.once(egret.TouchEvent.TOUCH_TAP, this.onPlayVideo, this);
+        this.stage.addEventListener(egret.Event.RESIZE, this.onResizeScreen, this)
+
+        this.textfield2 = new egret.TextField();
+        this.textfield2.width = 720;
+        this.textfield2.wordWrap = true;
+        this.textfield2.multiline = true;
+        this.textfield2.y = 100;
+        this.textfield2.touchEnabled = true;
+        this.textfield2.stroke = 1;
+        this.textfield2.text = window.navigator.userAgent;
+        this.addChild(this.textfield2);
         // this.stage.once(egret.TouchEvent.TOUCH_TAP, this.onPlayVideo, this);
     }
 
-    private onTouchTxt(e:egret.TouchEvent):void{
-        // this.stage.orientation = 
-        this.textfield.text = "已经点击了"+DeviceUtil.IsWeb+DeviceUtil.isMobile;
-        if(DeviceUtil.IsWeb){
-           if(DeviceUtil.isMobile) {
-               this.stage.orientation = egret.OrientationMode.LANDSCAPE;
-               this.stage.setContentSize(1280,720);
-           }
-           else{
-               this.stage.setContentSize(1280,720);
-           }
+    private onResizeScreen(e: egret.Event): void {
+        console.log("尺寸变换了");
+        console.log(this.stage.orientation);
+        console.log(window.orientation)
+    }
+
+    private onTouchTxt(e: egret.TouchEvent): void {
+        Config.txt = this.textfield;
+        Video.instance().init("resource/videos/V1.mp4", null, true)
+    }
+
+    private onTouchTxt1(e: egret.TouchEvent): void {
+        Config.txt = this.textfield1;
+        this.textfield1.text = "已经点击了" + DeviceUtil.IsWeb + DeviceUtil.isMobile;
+        if (DeviceUtil.IsWeb) {
+            if (DeviceUtil.isMobile) {
+                this.stage.orientation = egret.OrientationMode.LANDSCAPE;
+                this.stage.setContentSize(1280, 720);
+            }
+            else {
+                this.stage.setContentSize(1280, 720);
+            }
         }
         e.stopPropagation();
         this.stage.once(egret.TouchEvent.TOUCH_TAP, this.onPlayVideo, this);
@@ -123,23 +162,7 @@ class Main extends eui.UILayer {
      * Click the button
      */
     private onPlayVideo(e: egret.TouchEvent) {
-        Video.instance().init("resource/videos/V2.mp4", null, true)
-        // let panel = new eui.Panel();
-        // panel.title = "Title";
-        // panel.horizontalCenter = 0;
-        // panel.verticalCenter = 0;
-        // this.addChild(panel);
-        // if (MyVideo.instance().paused) {
-        //     if (MyVideo.instance().src) {
-        //         MyVideo.instance().play();
-        //     }
-        //     else {
-        //         MyVideo.instance().init("resource/videos/V1.mp4", "resource/assets/bg.jpg", false)
-        //     }
-        // }
-        // else {
-        //     MyVideo.instance().pause();
-        // }
+        Video.instance().init("resource/videos/V0.mp4", null, true)
     }
 
     private onPlayerComplete(): void {

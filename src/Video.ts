@@ -22,14 +22,14 @@ class Video {
     public constructor() {
         this._video = document.getElementById("myVideo");
         this._video["obj"] = this;
-        this._video.style.visibility = "hidden";
+        this._video.style.display = "none";
     }
 
     public init(src: string, poster: string = "", autoPlay: boolean = true, completeHandler: any = null, layerType: string = ""): void {
         if (this._src)
             this.pause();
         console.log('播放视频:' + src);
-        this._video.style.visibility = "visible";
+        this._video.style.display = "";
         // if (poster == "") {
         //     poster = ResPathUtil.getCommonImageRes("imgAlpha");
         // }
@@ -74,7 +74,7 @@ class Video {
     }
 
     public dispose(): void {
-        this._video.style.visibility = "hidden";
+        this._video.style.display = "none";
         // App.layer.showVideoLayer(false);
         // PanelOpenManager.removePanel(EnumPanelID.VIDEO_BUTTON);
         this._video.removeEventListener("ended", this.onPlayerComplete);
@@ -144,17 +144,26 @@ class Video {
         if (DeviceUtil.IsWeb) {
             var clientW: number = document.body.clientWidth;
             var clientH: number = document.body.clientHeight;
-            if (DeviceUtil.isMobile && Config.stage.orientation == egret.OrientationMode.LANDSCAPE) {
-                // this._video.style.transform = "scale("+window.innerWidth/window.innerHeight+")"
-                this._video.style.transform = "rotate(90deg) translate(" + ((clientH - clientW) / 2) + "px," + ((clientH - clientW) / 2) + "px)";
-                this._video.style.webkitTransform = "rotate(90deg) translate(" + ((clientH - clientW) / 2) + "px," + ((clientH - clientW) / 2) + "px)";
-                this._video.style.width = clientH + "px";
-                this._video.style.height = clientW + "px";
-                this._video.style.transformOrigin = "center center";
-                this._video.style.webkitTransformOrigin = "center center";
-                // this._video["width"] = clientH;
-                // this._video["height"] = clientW;
-                Config.txt.text = clientW + "," + clientH + "  " + window.innerWidth + "," + window.innerHeight;
+            if (DeviceUtil.isMobile) {
+                if ((Config.stage.orientation == egret.OrientationMode.LANDSCAPE && (window.orientation == 0 || window.orientation == 180)) ||
+                    (Config.stage.orientation == egret.OrientationMode.PORTRAIT && (window.orientation == 90 || window.orientation == 270))) {
+                    // this._video.style.transform = "scale("+window.innerWidth/window.innerHeight+")"
+                    this._video.style.transform = "rotate(90deg) translate(" + ((clientH - clientW) / 2) + "px," + ((clientH - clientW) / 2) + "px)";
+                    this._video.style.webkitTransform = "rotate(90deg) translate(" + ((clientH - clientW) / 2) + "px," + ((clientH - clientW) / 2) + "px)";
+                    this._video.style.width = clientH + "px";
+                    this._video.style.height = clientW + "px";
+                    this._video.style.transformOrigin = "center center";
+                    this._video.style.webkitTransformOrigin = "center center";
+                    // this._video["width"] = clientH;
+                    // this._video["height"] = clientW;
+                    Config.txt.text = clientW + "," + clientH + "  " + window.innerWidth + "," + window.innerHeight;
+                }
+                else {
+                    this._video.style.transform = "";
+                    this._video.style.webkitTransform = "";
+                    this._video["width"] = clientW;
+                    this._video["height"] = clientH;
+                }
             }
             else {
                 this._video["width"] = clientW;
