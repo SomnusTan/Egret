@@ -1,1 +1,0 @@
-{"url": "other/s1_btn_selected.png", "type": "image", "name": "s1_btn_selected_png"},
